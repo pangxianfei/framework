@@ -18,8 +18,10 @@ type TokenRevokeError struct{}
 func (e TokenRevokeError) Error() string {
 	return "token revoke failed"
 }
-
-func AuthRequired(signKey string) request.HandlerFunc {
+/**
+AuthRequired授权
+*/
+func AuthRequired() request.HandlerFunc {
 	return func(c request.Context) {
 		token := c.DefaultQuery("token", "")
 		if token == "" {
@@ -32,7 +34,7 @@ func AuthRequired(signKey string) request.HandlerFunc {
 		// set token
 		c.Set(CONTEXT_TOKEN_KEY, token)
 
-		j := jwt.NewJWT(signKey)
+		j := jwt.NewJWT()
 		claims, err := j.ParseToken(token)
 		if err != nil {
 			if err == jwt.TokenExpired {
@@ -40,7 +42,6 @@ func AuthRequired(signKey string) request.HandlerFunc {
 					if claims, err := j.ParseToken(token); err == nil {
 						c.SetAuthClaim(claims)
 						c.Header("Authorization", "Bear "+token)
-						//c.JSON(http.StatusOK, toto.V{"data": toto.V{"token": token}})
 						return
 					}
 				}
@@ -52,7 +53,10 @@ func AuthRequired(signKey string) request.HandlerFunc {
 	}
 }
 
-func Revoke(c request.Context, signKey string) error {
+/**
+撤销 token
+ */
+func Revoke(c request.Context) error {
 	j := jwt.NewJWT(signKey)
 	if tokenString, exist := c.Get(CONTEXT_TOKEN_KEY); exist {
 		if token, ok := tokenString.(string); ok {

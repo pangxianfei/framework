@@ -10,6 +10,7 @@ import (
 	"github.com/pangxianfei/framework/helpers/cache"
 	"github.com/pangxianfei/framework/helpers/debug"
 	"github.com/pangxianfei/framework/helpers/zone"
+	"github.com/pangxianfei/framework/config"
 )
 
 const ExpiredTime zone.Duration = 4 * zone.Hour //@todo move to configuration
@@ -80,7 +81,8 @@ type JWT struct {
 	SigningKey []byte
 }
 
-func NewJWT(signKey string) *JWT {
+func NewJWT() *JWT {
+	signKey := string(config.GetString("auth.sign_key"))
 	return &JWT{
 		[]byte(signKey),
 	}
