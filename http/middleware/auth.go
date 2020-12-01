@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	CONTEXT_TOKEN_KEY = "TOTOVAL_CONTEXT_TOKEN"
+	CONTEXT_TOKEN_KEY = "TMAIC_CONTEXT_TOKEN"
 )
 
 type TokenRevokeError struct{}
@@ -57,7 +57,7 @@ func AuthRequired() request.HandlerFunc {
 撤销 token
  */
 func Revoke(c request.Context) error {
-	j := jwt.NewJWT(signKey)
+	j := jwt.NewJWT()
 	if tokenString, exist := c.Get(CONTEXT_TOKEN_KEY); exist {
 		if token, ok := tokenString.(string); ok {
 			if err := j.RevokeToken(token); err == nil {
