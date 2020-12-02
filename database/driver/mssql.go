@@ -60,6 +60,6 @@ func (_mys *mssql) config(key string) string {
 	return value
 }
 func (_mys *mssql) ConnectionArgs() string {
-	
-	return "sqlserver://" +_mys.username() + ":" + _mys.password() + "@" + _mys.host() + ":" + _mys.port() + "?" + _mys.database()
+
+	return "sqlserver://" + _mys.username() + ":" + _mys.password() + "@" + _mys.host() + ":" + _mys.port() + "?database=" + _mys.database()
 }
