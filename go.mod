@@ -16,7 +16,7 @@ require (
 	github.com/gorilla/websocket v1.4.1
 	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
 	github.com/jinzhu/copier v0.0.0-20190625015134-976e0346caa8
-	github.com/jinzhu/gorm v1.9.10
+	gorm.io/gorm v1.20.7  // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/nicksnyder/go-i18n/v2 v2.0.2
