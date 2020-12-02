@@ -3,7 +3,7 @@ package migration
 import (
 	"sort"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type Migrator interface {

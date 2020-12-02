@@ -3,7 +3,7 @@ package migration
 import (
 	"fmt"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/pangxianfei/framework/database"
 
@@ -20,7 +20,7 @@ type Migration struct {
 func (m *Migration) up(db *gorm.DB) {
 	tx := db.Begin()
 	{
-		tx.CreateTable(&m)
+		tx.Migrator().CreateTable(&m)
 	}
 	tx.Commit()
 }
