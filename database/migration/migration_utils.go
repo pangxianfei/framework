@@ -49,9 +49,12 @@ func (mu *MigrationUtils) needMigrateList() (_migratorList []Migrator) {
 
 func (mu *MigrationUtils) currentBatch() uint {
 	migration := &Migration{}
-	if !mu.DB().Order("batch desc").First(&migration).RecordNotFound() {
-		return migration.Batch
+
+
+	if err := mu.DB().Order("batch desc").First(&migration).Error; err != nil {
+		return 1
 	}
+
 	return 0
 }
 func (mu *MigrationUtils) addMigration(migratorName string, batch uint) bool {
@@ -120,7 +123,7 @@ func (mu *MigrationUtils) Rollback() {
 				panic("migration has not been defined yet!")
 			}
 
-			if err := migrator.Down(mu.DB()).Error; err != nil {
+			if err := migrator.Down(mu.DB()); err != nil {
 				panic(err)
 			}
 

@@ -224,6 +224,11 @@ func (h *Helper) First(outPtr interface{}, withTrashed bool) error {
 		return err
 	}
 	return nil
+
+
+
+
+
 }
 
 func (h *Helper) FirstForUpdate(outPtr interface{}, withTrashed bool) error {
