@@ -1,8 +1,10 @@
 package driver
 
 import (
+	//"net/url"
 	"github.com/pangxianfei/framework/config"
 	//"github.com/pangxianfei/framework/helpers/log"
+	//"github.com/pangxianfei/framework/helpers/zone"
 )
 
 type mssql struct {
@@ -60,6 +62,6 @@ func (_mys *mssql) config(key string) string {
 	return value
 }
 func (_mys *mssql) ConnectionArgs() string {
-
+	//loc := url.Values{"loc": []string{zone.GetLocation().String()}}
 	return "sqlserver://" + _mys.username() + ":" + _mys.password() + "@" + _mys.host() + ":" + _mys.port() + "?database=" + _mys.database()
 }

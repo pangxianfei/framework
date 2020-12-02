@@ -9,10 +9,8 @@ import (
 	"github.com/pangxianfei/framework/database/driver"
 	"github.com/pangxianfei/framework/helpers/zone"
 	"time"
-	"github.com/pangxianfei/framework/helpers/log"
 )
 
-//var dbv1 *gormv1.DB
 var db *gorm.DB
 var dber databaser
 /***
@@ -26,8 +24,6 @@ func Initialize() {
   pangxianfei by add
  */
 func setv2Connection(conn string) (dber databaser, sqlDb *gorm.DB) {
-
-
 
 	if conn == "" {
 		panic("database connection parse error")
@@ -49,39 +45,31 @@ func setv2Connection(conn string) (dber databaser, sqlDb *gorm.DB) {
 			Conn:                      Db,
 		}), &gorm.Config{})
 		err = Db.Ping()
-
 		if err != nil {
 			panic("failed to connect database by ping")
 		}
-
 		Db.SetConnMaxLifetime(time.Hour)
 		Db.SetMaxIdleConns(config.GetInt("database.max_idle_connections"))
 		Db.SetMaxOpenConns(config.GetInt("database.max_open_connections"))
 		Db.SetConnMaxLifetime(zone.Duration(config.GetInt("database.max_life_seconds")) * zone.Second)
-		return dber, sqlDb
 		break
-
 	case "mssql":
 		dber = driver.NewMssql(conn)
-		log.Debug(dber.ConnectionArgs())
 		sqlDb, err := gorm.Open(sqlserver.Open(dber.ConnectionArgs()), &gorm.Config{})
-		/*
-				mssqldb, err := Db.DB()
-				mssqldb.SetConnMaxLifetime(time.Hour)
-				mssqldb.SetMaxIdleConns(config.GetInt("database.max_idle_connections"))
-				mssqldb.SetMaxOpenConns(config.GetInt("database.max_open_connections"))
-				mssqldb.SetConnMaxLifetime(zone.Duration(config.GetInt("database.max_life_seconds")) * zone.Second)
-		*/
+		Db, err := sqlDb.DB()
+		Db.SetConnMaxLifetime(time.Hour)
+		Db.SetMaxIdleConns(config.GetInt("database.max_idle_connections"))
+		Db.SetMaxOpenConns(config.GetInt("database.max_open_connections"))
+		Db.SetConnMaxLifetime(zone.Duration(config.GetInt("database.max_life_seconds")) * zone.Second)
+		err = Db.Ping()
 		if err != nil {
 			panic("failed to connect database by ping")
 		}
-		return dber, sqlDb
 		break
 	default:
 		panic("incorrect database connection provided")
-
 	}
-	return
+	return dber, sqlDb
 }
 
 
