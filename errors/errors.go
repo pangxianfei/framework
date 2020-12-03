@@ -5,11 +5,11 @@ import (
 
 	"github.com/ztrue/tracerr"
 
-	"github.com/pangxianfei/framework/helpers/toto"
+	"github.com/pangxianfei/framework"
 	"github.com/pangxianfei/framework/logs"
 )
 
-func ErrPrintln(err error, fields toto.V) {
+func ErrPrintln(err error, fields tmaic.V) {
 	startFrom := 2
 	if err == nil {
 		return
@@ -24,13 +24,13 @@ func ErrPrintln(err error, fields toto.V) {
 	traceErr = tracerr.CustomError(err, frameList)
 
 	if fields == nil {
-		fields = toto.V{}
+		fields = tmaic.V{}
 	}
-	fields["totoval_trace"] = tracerr.SprintSource(traceErr, 0)
+	fields["tmaic_trace"] = tracerr.SprintSource(traceErr, 0)
 	logs.Println(logs.ERROR, err.Error(), fields)
 }
 
-func ErrPrint(err error, startFrom int, fields toto.V) string {
+func ErrPrint(err error, startFrom int, fields tmaic.V) string {
 	if err == nil {
 		return ""
 	}
@@ -44,8 +44,8 @@ func ErrPrint(err error, startFrom int, fields toto.V) string {
 	traceErr = tracerr.CustomError(err, frameList)
 
 	if fields == nil {
-		fields = toto.V{}
+		fields = tmaic.V{}
 	}
-	fields["totoval_trace"] = tracerr.SprintSource(traceErr)
+	fields["tmaic_trace"] = tracerr.SprintSource(traceErr)
 	return fmt.Sprint(err.Error(), fields)
 }

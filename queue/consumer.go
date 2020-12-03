@@ -9,7 +9,7 @@ import (
 
 	"github.com/pangxianfei/framework/config"
 	"github.com/pangxianfei/framework/helpers/log"
-	"github.com/pangxianfei/framework/helpers/toto"
+	"github.com/pangxianfei/framework"
 	"github.com/pangxianfei/framework/helpers/zone"
 	message "github.com/pangxianfei/framework/queue/protocol_buffers"
 )
@@ -43,7 +43,7 @@ func (c *consumer) Pop() error {
 		// log hash
 		msg.Hash = hash
 
-		log.Info("queue msg received", toto.V{
+		log.Info("queue msg received", tmaic.V{
 			"msg": msg,
 		})
 
@@ -76,7 +76,7 @@ func (c *consumer) Failed(msg message.Message, handlerErrPtr *error) {
 
 		//fmt.Println(msg.Retries)
 
-		_ = log.Error(errors.New("queue msg processed error"), toto.V{
+		_ = log.Error(errors.New("queue msg processed error"), tmaic.V{
 			"msg":   msg,
 			"error": hErr,
 		})
@@ -85,7 +85,7 @@ func (c *consumer) Failed(msg message.Message, handlerErrPtr *error) {
 			// if database save failed, then push into queue again? or log?
 			if err := c.failedToDatabase(c.topicName, c.channelName, &msg, hErr); err != nil {
 
-				_ = log.Error(errors.New("failedtodatabase processed failed"), toto.V{
+				_ = log.Error(errors.New("failedtodatabase processed failed"), tmaic.V{
 					"new_msg": newMsg,
 				})
 				newMsg.Retries = 1
@@ -98,7 +98,7 @@ func (c *consumer) Failed(msg message.Message, handlerErrPtr *error) {
 		if err := c.failedToQueue(&newMsg, hErr, handlerErrPtr); err != nil {
 			if err := c.failedToDatabase(c.topicName, c.channelName, &newMsg, hErr); err != nil {
 				// error!!!! processed failed
-				_ = log.Error(errors.New("failedtoqueue processed failed"), toto.V{
+				_ = log.Error(errors.New("failedtoqueue processed failed"), tmaic.V{
 					"new_msg": newMsg,
 				})
 			}

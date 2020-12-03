@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/pangxianfei/framework/config"
-	"github.com/pangxianfei/framework/helpers/toto"
+	"github.com/pangxianfei/framework"
 	"github.com/pangxianfei/framework/http/controller"
 	"github.com/pangxianfei/framework/request"
 )
@@ -14,7 +14,7 @@ type Dashboard struct {
 }
 
 func (d *Dashboard) Index(c request.Context) {
-	c.HTML(http.StatusOK, "totoval_dashboard.index", toto.V{
+	c.HTML(http.StatusOK, "tmaic_dashboard.index", tmaic.V{
 		"url": "ws://" + ":" + config.GetString("monitor.port") + "/monitor/dashboard/ws",
 	})
 	return

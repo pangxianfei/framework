@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/pangxianfei/framework/helpers/toto"
+	"github.com/pangxianfei/framework"
 )
 
 type UserNotPermitError struct{}
@@ -24,7 +24,7 @@ func Middleware(policy Policier, action Action, c Context, params []gin.Param) {
 
 	// get user
 	if err := c.ScanUser(); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, toto.V{"error": err})
+		c.JSON(http.StatusUnprocessableEntity, tmaic.V{"error": err})
 		c.Abort()
 		return
 	}
@@ -41,5 +41,5 @@ func Middleware(policy Policier, action Action, c Context, params []gin.Param) {
 }
 
 func forbid(c Context) {
-	c.JSON(http.StatusForbidden, toto.V{"error": UserNotPermitError{}.Error()})
+	c.JSON(http.StatusForbidden, tmaic.V{"error": UserNotPermitError{}.Error()})
 }

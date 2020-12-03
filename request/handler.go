@@ -11,8 +11,8 @@ func ConvertHandlers(handlers []HandlerFunc) (ginHandlers []gin.HandlerFunc) {
 		handler := h // must new a variable for `range's val`, or the `val` in anonymous funcs will be overwrited in every loop
 
 		ginHandlers = append(ginHandlers, func(c *gin.Context) {
-			totovalContext := http.ConvertContext(c)
-			handler(totovalContext)
+			tmaicContext := http.ConvertContext(c)
+			handler(tmaicContext)
 		})
 	}
 	return

@@ -8,7 +8,7 @@ var channelMap *channels
 
 type channelName = string
 
-const totovalDefaultChannelName = "totovalDefaultChannel"
+const tmaicDefaultChannelName = "tmaicDefaultChannel"
 
 func init() {
 	channelMap = &channels{

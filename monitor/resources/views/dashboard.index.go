@@ -3,7 +3,7 @@ package views
 import "github.com/pangxianfei/framework/view"
 
 func init() {
-	view.AddView("totoval_dashboard.index", `{{define "totoval_dashboard.index"}}
+	view.AddView("tmaic_dashboard.index", `{{define "tmaic_dashboard.index"}}
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 
 	"github.com/pangxianfei/framework/helpers/log"
-	"github.com/pangxianfei/framework/helpers/toto"
+	"github.com/pangxianfei/framework"
 	"github.com/pangxianfei/framework/helpers/zone"
 	request_http "github.com/pangxianfei/framework/request/http"
 )
@@ -24,15 +24,15 @@ func ConvertHandler(wsHandler Handler) gin.HandlerFunc {
 	}
 	var pingPeriod = (wsHandler.ReadTimeout() * 9) / 10
 	return func(c *gin.Context) {
-		totovalContext := request_http.ConvertContext(c)
+		tmaicContext := request_http.ConvertContext(c)
 
 		// create connectionHub
-		hub := newConnectionHub(totovalContext, wsHandler)
+		hub := newConnectionHub(tmaicContext, wsHandler)
 
-		ws, err := wsUpgrader.Upgrade(totovalContext.Writer(), totovalContext.Request(), nil)
+		ws, err := wsUpgrader.Upgrade(tmaicContext.Writer(), tmaicContext.Request(), nil)
 		if err != nil {
-			_ = log.Error(err, toto.V{"msg": "Failed to set websocket upgrade"})
-			totovalContext.JSON(http.StatusUnprocessableEntity, toto.V{"error": err})
+			_ = log.Error(err, tmaic.V{"msg": "Failed to set websocket upgrade"})
+			tmaicContext.JSON(http.StatusUnprocessableEntity, tmaic.V{"error": err})
 			return
 		}
 		// close ws connection
@@ -157,7 +157,7 @@ func ConvertHandler(wsHandler Handler) gin.HandlerFunc {
 
 				return
 			default:
-				log.Warn("No websocket handler on this msgType", toto.V{"msgType": msg.msgType})
+				log.Warn("No websocket handler on this msgType", tmaic.V{"msgType": msg.msgType})
 			}
 
 		}

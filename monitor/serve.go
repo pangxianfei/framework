@@ -9,7 +9,7 @@ import (
 
 	c "github.com/pangxianfei/framework/config"
 	"github.com/pangxianfei/framework/helpers/log"
-	"github.com/pangxianfei/framework/helpers/toto"
+	"github.com/pangxianfei/framework"
 	"github.com/pangxianfei/framework/helpers/zone"
 	"github.com/pangxianfei/framework/monitor/routes"
 	"github.com/pangxianfei/framework/request"
@@ -35,7 +35,7 @@ func HttpMonitorServe(parentCtx context.Context, wg *sync.WaitGroup) {
 	}
 
 	go func() {
-		log.Info("Monitor Served At", toto.V{"Addr": s.Addr})
+		log.Info("Monitor Served At", tmaic.V{"Addr": s.Addr})
 		if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatal(err.Error())
 		}
@@ -51,7 +51,7 @@ func HttpMonitorServe(parentCtx context.Context, wg *sync.WaitGroup) {
 	defer cancel()
 
 	if err := s.Shutdown(ctx); err != nil {
-		log.Fatal("Monitor Server Shutdown: ", toto.V{"error": err})
+		log.Fatal("Monitor Server Shutdown: ", tmaic.V{"error": err})
 	}
 
 	wg.Done()

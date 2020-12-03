@@ -9,7 +9,7 @@ import (
 	"github.com/pangxianfei/framework/helpers/str"
 )
 
-const VALIDATION_CACHE_KEY = "TOTOVAL_VALIDATION_%s"
+const VALIDATION_CACHE_KEY = "TMAIC_VALIDATION_%s"
 
 func validationCacheKey(index string) string {
 	return fmt.Sprintf(VALIDATION_CACHE_KEY, index)

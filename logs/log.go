@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/pangxianfei/framework/config"
-	"github.com/pangxianfei/framework/helpers/toto"
+	"github.com/pangxianfei/framework"
 	"github.com/pangxianfei/framework/sentry"
 )
 
@@ -34,7 +34,7 @@ func Initialize() {
 	log.SetLevel(logLevel)
 }
 
-type Field = toto.V
+type Field = tmaic.V
 
 func Println(level Level, msg interface{}, fields Field) {
 

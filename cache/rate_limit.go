@@ -19,8 +19,8 @@ func NewRateLimit(cache cacher) *RateLimit {
 	}
 }
 
-const RATE_LIMITE_CACHE_KEY = "TOTOVAL_RATE_LIMIT_%s"
-const RATE_LIMITE_TIMER_CACHE_KEY = "TOTOVAL_RATE_LIMIT_%s_TIMER"
+const RATE_LIMITE_CACHE_KEY = "TMAIC_RATE_LIMIT_%s"
+const RATE_LIMITE_TIMER_CACHE_KEY = "TMAIC_RATE_LIMIT_%s_TIMER"
 
 func rateLimitCacheKey(key string) string {
 	return fmt.Sprintf(RATE_LIMITE_CACHE_KEY, key)

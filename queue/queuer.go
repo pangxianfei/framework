@@ -6,8 +6,8 @@ import (
 )
 
 func Initialize() {
-	//@todo use different config to new different queuer
-	//@todo memory, nsq, rabbitmq
+	//@todo使用不同的配置来新建不同的队列
+	//@todo内存、nsq、rabbitmq
 	setQueue(nsq.NewNsq("nsq"))
 	initializeFailedProcessor()
 }

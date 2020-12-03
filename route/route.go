@@ -10,7 +10,7 @@ import (
 
 	"github.com/pangxianfei/framework/app"
 	"github.com/pangxianfei/framework/helpers/log"
-	"github.com/pangxianfei/framework/helpers/toto"
+	"github.com/pangxianfei/framework"
 	"github.com/pangxianfei/framework/http/middleware"
 	"github.com/pangxianfei/framework/policy"
 	"github.com/pangxianfei/framework/request"
@@ -35,7 +35,7 @@ func (rnm *routeNameMap) set(routeName, routeUrl string) {
 	defer rnm.lock.Unlock()
 	rnm.data[routeName] = routeUrl
 }
-func (rnm *routeNameMap) Get(routeName string, param toto.S) (url string, err error) {
+func (rnm *routeNameMap) Get(routeName string, param tmaic.S) (url string, err error) {
 	rnm.lock.RLock()
 	defer rnm.lock.RUnlock()
 	routeUrl, ok := rnm.data[routeName]

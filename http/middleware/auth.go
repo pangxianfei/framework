@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/pangxianfei/framework/helpers/toto"
+	"github.com/pangxianfei/framework"
 	"github.com/pangxianfei/framework/request"
 	"github.com/pangxianfei/framework/utils/jwt"
 )
@@ -46,7 +46,7 @@ func AuthRequired() request.HandlerFunc {
 					}
 				}
 			}
-			c.AbortWithStatusJSON(http.StatusUnauthorized, toto.V{"error": err.Error()})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, tmaic.V{"error": err.Error()})
 			return
 		}
 		c.SetAuthClaim(claims)

@@ -10,7 +10,7 @@ import (
 
 	"github.com/pangxianfei/framework/helpers/locale"
 	"github.com/pangxianfei/framework/helpers/log"
-	"github.com/pangxianfei/framework/helpers/toto"
+	"github.com/pangxianfei/framework"
 	"github.com/pangxianfei/framework/helpers/trans"
 )
 
@@ -124,7 +124,7 @@ func validate(shouldBindFunc func(rdp interface{}) error, c Context, requestData
 
 		_err, ok := err.(validator.ValidationErrors)
 		if !ok {
-			c.JSON(http.StatusUnprocessableEntity, toto.V{"error": err.Error()})
+			c.JSON(http.StatusUnprocessableEntity, tmaic.V{"error": err.Error()})
 			return false
 		}
 
@@ -132,9 +132,9 @@ func validate(shouldBindFunc func(rdp interface{}) error, c Context, requestData
 
 		errorResult := trans.ValidationTranslate(v, locale.Locale(c), _err)
 		if onlyFirstError {
-			c.JSON(http.StatusUnprocessableEntity, toto.V{"error": errorResult.First()})
+			c.JSON(http.StatusUnprocessableEntity, tmaic.V{"error": errorResult.First()})
 		} else {
-			c.JSON(http.StatusUnprocessableEntity, toto.V{"error": errorResult})
+			c.JSON(http.StatusUnprocessableEntity, tmaic.V{"error": errorResult})
 		}
 
 		return false

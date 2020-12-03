@@ -7,15 +7,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/pangxianfei/framework/helpers/toto"
+	"github.com/pangxianfei/framework"
 	"github.com/pangxianfei/framework/request/http/auth"
 
 	"github.com/pangxianfei/framework/config"
 	"github.com/pangxianfei/framework/utils/jwt"
 )
 
-const CONTEXT_CLAIM_KEY = "TOTOVAL_CONTEXT_CLAIM"
-const CONTEXT_IUSER_MODEL_KEY = "TOTOVAL_CONTEXT_IUSER_MODEL"
+const CONTEXT_CLAIM_KEY = "TMAIC_CONTEXT_CLAIM"
+const CONTEXT_IUSER_MODEL_KEY = "TMAIC_CONTEXT_IUSER_MODEL"
 
 type httpContext struct {
 	*gin.Context
@@ -84,7 +84,7 @@ func (c *httpContext) IUserModel() auth.IUser {
 
 func (c *httpContext) ScanUserWithJSON() (isAbort bool) {
 	if err := c.ScanUser(); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, toto.V{"error": err})
+		c.JSON(http.StatusUnprocessableEntity, tmaic.V{"error": err})
 		return true
 	}
 	return false

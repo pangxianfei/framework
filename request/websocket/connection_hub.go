@@ -30,7 +30,7 @@ func newConnectionHub(c request.Context, handler Handler) *connectionHub {
 	ch.Context = c
 
 	// join hub to tmaic default channel
-	channelMap.Join(totovalDefaultChannelName, ch)
+	channelMap.Join(tmaicDefaultChannelName, ch)
 	// join hub to user defined default channel
 	for _, channelName := range handler.DefaultChannels() {
 		channelMap.Join(channelName, ch)
@@ -45,7 +45,7 @@ func (ch *connectionHub) Send(msg *Msg) {
 	ch.msgChan <- msg
 }
 func (ch *connectionHub) Broadcast(msg *Msg) {
-	ch.BroadcastTo(totovalDefaultChannelName, msg)
+	ch.BroadcastTo(tmaicDefaultChannelName, msg)
 }
 
 func (ch *connectionHub) BroadcastTo(channelName string, msg *Msg) {

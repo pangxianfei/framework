@@ -7,18 +7,18 @@ import (
 
 	"gopkg.in/dgrijalva/jwt-go.v3"
 
+	"github.com/pangxianfei/framework/config"
 	"github.com/pangxianfei/framework/helpers/cache"
 	"github.com/pangxianfei/framework/helpers/debug"
 	"github.com/pangxianfei/framework/helpers/zone"
-	"github.com/pangxianfei/framework/config"
 )
 
 const ExpiredTime zone.Duration = 4 * zone.Hour //@todo move to configuration
 const RefreshExpiredTime zone.Duration = 10 * zone.Minute
 const MaxRefreshTimes uint = 1
 
-const REFRESH_TOKEN_CACHE_KEY = "TOTOVAL_REFRESH_TOKEN_%s"
-const REVOKED_TOKEN_CACHE_KEY = "TOTOVAL_REVOKED_TOKEN_%s"
+const REFRESH_TOKEN_CACHE_KEY = "TMAIC_REFRESH_TOKEN_%s"
+const REVOKED_TOKEN_CACHE_KEY = "TMAIC_REVOKED_TOKEN_%s"
 
 func refreshTokenCacheKey(tokenMd5 string) string {
 	return fmt.Sprintf(REFRESH_TOKEN_CACHE_KEY, tokenMd5)
