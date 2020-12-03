@@ -876,7 +876,7 @@ func RegisterDefaultTranslations(v *validator.Validate, locale *locale) (err err
 
 				t, err := ut.T(fe.Tag(), fe.Field(), fe.Param())
 				if err != nil {
-					log.Info("warning: error translating FieldError", toto.V{"field": fe})
+					log.Info("warning: error translating FieldError", tmaic.V{"field": fe})
 					return fe.(error).Error()
 				}
 
@@ -1164,7 +1164,7 @@ func RegisterDefaultTranslations(v *validator.Validate, locale *locale) (err err
 
 				t, err := ut.T(fe.Tag(), fe.Field(), fe.Param())
 				if err != nil {
-					log.Info("warning: error translating FieldError", toto.V{"field": fe})
+					log.Info("warning: error translating FieldError", tmaic.V{"field": fe})
 					return fe.(error).Error()
 				}
 
