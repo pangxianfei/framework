@@ -9,6 +9,7 @@ import (
 	"github.com/pangxianfei/framework/database/driver"
 	"github.com/pangxianfei/framework/helpers/zone"
 	"time"
+	"github.com/pangxianfei/framework/helpers/log"
 )
 
 var db *gorm.DB
@@ -30,7 +31,7 @@ func setv2Connection(conn string) (dber databaser, sqlDb *gorm.DB) {
 	}
 	conn = config.GetString("database." + conn)
 
-	// get driver instance
+
 	switch conn {
 	case "mysql":
 		dber = driver.NewMysql(conn)
@@ -52,24 +53,36 @@ func setv2Connection(conn string) (dber databaser, sqlDb *gorm.DB) {
 		Db.SetMaxIdleConns(config.GetInt("database.max_idle_connections"))
 		Db.SetMaxOpenConns(config.GetInt("database.max_open_connections"))
 		Db.SetConnMaxLifetime(zone.Duration(config.GetInt("database.max_life_seconds")) * zone.Second)
+		return dber, sqlDb
 		break
+
 	case "mssql":
 		dber = driver.NewMssql(conn)
+		log.Debug(dber.ConnectionArgs())
+
+
 		sqlDb, err := gorm.Open(sqlserver.Open(dber.ConnectionArgs()), &gorm.Config{})
-		Db, err := sqlDb.DB()
-		Db.SetConnMaxLifetime(time.Hour)
-		Db.SetMaxIdleConns(config.GetInt("database.max_idle_connections"))
-		Db.SetMaxOpenConns(config.GetInt("database.max_open_connections"))
-		Db.SetConnMaxLifetime(zone.Duration(config.GetInt("database.max_life_seconds")) * zone.Second)
-		err = Db.Ping()
+		if err != nil {
+			panic("failed to connect database")
+		}
+		db, err := sqlDb.DB()
+		err = db.Ping()
 		if err != nil {
 			panic("failed to connect database by ping")
 		}
+
+		db.SetConnMaxLifetime(time.Hour)
+		db.SetMaxIdleConns(config.GetInt("database.max_idle_connections"))
+		db.SetMaxOpenConns(config.GetInt("database.max_open_connections"))
+		db.SetConnMaxLifetime(zone.Duration(config.GetInt("database.max_life_seconds")) * zone.Second)
+		return dber, sqlDb
+
+
 		break
 	default:
 		panic("incorrect database connection provided")
 	}
-	return dber, sqlDb
+	return
 }
 
 
