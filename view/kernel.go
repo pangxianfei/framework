@@ -3,10 +3,14 @@ package view
 import (
 	"html/template"
 	"sync"
-
+	"os"
+	"io/ioutil"
+	//"github.com/pangxianfei/framework"
 	"github.com/pangxianfei/framework/request"
+	//"github.com/pangxianfei/framework/helpers/log"
+	c "github.com/pangxianfei/framework/config"
 )
-
+var routes = route{route: c.GetString("TEMPLATE_TPL"), suffix: c.GetString("SUFFIX")}
 func Initialize(r *request.Engine) {
 	t := template.New("")
 	for _, tmpl := range engineTemplateMap.Get() {
@@ -15,17 +19,47 @@ func Initialize(r *request.Engine) {
 	r.SetHTMLTemplate(t)
 }
 
-func AddView(name string, content string) {
-	engineTemplateMap.Set(&tmpl{
-		name:    name,
-		content: content,
-	})
+func AddView(name string) {
+
+	FILE_PATH := routes.route+name+routes.suffix
+	_, err := os.Stat(FILE_PATH)
+	if err == nil {
+
+		content, err := ioutil.ReadFile(routes.route+name+routes.suffix)
+		if err != nil {
+			panic("Template does not exist!")
+		}
+
+		engineTemplateMap.Set(&tmpl{
+			name:    name,
+			content: string(content),
+		})
+
+	}
+	//else {
+	//	panic("System Template does not exist!")
+	//}
+
+
+
+
+
+
+
+
 }
 
 type tmpl struct {
 	name    string
 	content string
 }
+
+type route struct {
+	route    string
+	suffix     string
+}
+
+
 type engineTemplate struct {
 	lock sync.RWMutex
 	data []*tmpl

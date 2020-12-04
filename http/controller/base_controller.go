@@ -5,6 +5,7 @@ import (
 	"github.com/pangxianfei/framework/request/http/auth"
 	"github.com/pangxianfei/framework/validator"
 	"github.com/pangxianfei/framework/model"
+ 
 )
 
 type BaseController struct {
@@ -12,4 +13,7 @@ type BaseController struct {
 	auth.RequestUser
 	validator.Validation
 	model.BaseModel
+
 }
+
+

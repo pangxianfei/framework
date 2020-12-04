@@ -9,7 +9,6 @@ import (
 	"github.com/pangxianfei/framework/database/driver"
 	"github.com/pangxianfei/framework/helpers/zone"
 	"time"
-	"github.com/pangxianfei/framework/helpers/log"
 )
 
 var db *gorm.DB
@@ -55,12 +54,8 @@ func setv2Connection(conn string) (dber databaser, sqlDb *gorm.DB) {
 		Db.SetConnMaxLifetime(zone.Duration(config.GetInt("database.max_life_seconds")) * zone.Second)
 		return dber, sqlDb
 		break
-
 	case "mssql":
 		dber = driver.NewMssql(conn)
-		log.Debug(dber.ConnectionArgs())
-
-
 		sqlDb, err := gorm.Open(sqlserver.Open(dber.ConnectionArgs()), &gorm.Config{})
 		if err != nil {
 			panic("failed to connect database")
@@ -70,22 +65,17 @@ func setv2Connection(conn string) (dber databaser, sqlDb *gorm.DB) {
 		if err != nil {
 			panic("failed to connect database by ping")
 		}
-
 		db.SetConnMaxLifetime(time.Hour)
 		db.SetMaxIdleConns(config.GetInt("database.max_idle_connections"))
 		db.SetMaxOpenConns(config.GetInt("database.max_open_connections"))
 		db.SetConnMaxLifetime(zone.Duration(config.GetInt("database.max_life_seconds")) * zone.Second)
 		return dber, sqlDb
-
-
 		break
 	default:
 		panic("incorrect database connection provided")
 	}
 	return
 }
-
-
 
 func Connection(conn string) (db *gorm.DB) {
 	_, db = setv2Connection(conn)
