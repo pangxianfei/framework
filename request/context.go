@@ -6,6 +6,7 @@ import (
 	"github.com/pangxianfei/framework/context"
 	"github.com/pangxianfei/framework/request/http/auth"
 	"github.com/pangxianfei/framework/utils/jwt"
+
 )
 
 type Context interface {
@@ -19,4 +20,5 @@ type Context interface {
 
 	auth.Context
 	auth.RequestIUser
+	View(name string, obj interface{})
 }

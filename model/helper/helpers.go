@@ -6,9 +6,8 @@ import (
 	"strings"
 
 	"github.com/jinzhu/copier"
-	//"github.com/jinzhu/gorm"
-	"gorm.io/gorm"
 	"gopkg.in/go-playground/validator.v9"
+	"gorm.io/gorm"
 
 	"github.com/pangxianfei/framework/model"
 )
@@ -225,10 +224,6 @@ func (h *Helper) First(outPtr interface{}, withTrashed bool) error {
 	}
 	return nil
 
-
-
-
-
 }
 
 func (h *Helper) FirstForUpdate(outPtr interface{}, withTrashed bool) error {
@@ -356,9 +351,10 @@ func mapFilter(_db *gorm.DB, filterArr []model.Filter) *gorm.DB {
 
 	return _db
 }
+
 /**
   pangxianfei by ad count int64
- */
+*/
 func (h *Helper) Count(in model.Modeller, filterArr []model.Filter, withTrashed bool) (count int64, err error) {
 	err = h.Q(filterArr, []model.Sort{}, 0, withTrashed).Model(in).Count(&count).Error
 	return count, err

@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -16,7 +16,7 @@ type Pagination struct {
 	currentPageItemCount uint
 	currentPageNum       uint
 	totalPageNum         uint
-	totalItemCount       uint
+	totalItemCount       int64
 	itemArr              interface{}
 	perPage              uint
 }
@@ -46,7 +46,7 @@ func (p *Pagination) ItemArr() interface{} {
 	return p.itemArr
 }
 func (p *Pagination) Total() uint {
-	return p.totalItemCount
+	return uint(p.totalItemCount)
 }
 func (p *Pagination) PerPage() uint {
 	return p.perPage
@@ -107,7 +107,7 @@ func (bm *Model) Paginate(model interface{}, c Context, perPage uint) (paginatio
 
 	// get data
 	data := gorm.DB(*bm)
-	if err = data.Offset(perPage * (page - 1)).Limit(perPage).Find(model).Error; err != nil {
+	if err = data.Offset(int(perPage * (page - 1))).Limit(int(perPage)).Find(model).Error; err != nil {
 		return pagination, err
 	}
 	pagination.itemArr = model

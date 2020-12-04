@@ -5,4 +5,5 @@ type RequestIUser interface {
 	User() IUser
 	UserId() (userId uint, err error)
 	ScanUserWithJSON() (isAbort bool)
+
 }

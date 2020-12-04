@@ -3,15 +3,21 @@ package controllers
 import (
 	"errors"
 
-	"github.com/pangxianfei/framework/http/controller"
+	"github.com/pangxianfei/framework/http/nouncontroller"
 	"github.com/pangxianfei/framework/monitor/app/logics/dashboard"
 	"github.com/pangxianfei/framework/request/websocket"
+	"github.com/gin-gonic/gin"
 )
 
 type DashboardWebsocketController struct {
-	controller.BaseController
+	nouncontroller.NounController
 	websocket.BaseHandler
 }
+
+func (d *DashboardWebsocketController) View(this *gin.Context, tplName string, data gin.H) {
+	panic("implement me")
+}
+
 
 func (d *DashboardWebsocketController) DefaultChannels() []string {
 	return []string{"new-test-channel"}

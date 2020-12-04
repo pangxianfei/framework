@@ -2,7 +2,6 @@ package request
 
 import (
 	"github.com/gin-gonic/gin"
-
 	"github.com/pangxianfei/framework/request/http"
 )
 

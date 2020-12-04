@@ -132,7 +132,7 @@ type ResponseContextor interface {
 	SetCookie(name, value string, maxAge int, path, domain string, secure, httpOnly bool)
 	Cookie(name string) (string, error)
 	Render(code int, r render.Render)
-	HTML(code int, name string, obj interface{})
+	//HTML(code int, name string, obj interface{})
 	IndentedJSON(code int, obj interface{})
 	SecureJSON(code int, obj interface{})
 	JSONP(code int, obj interface{})

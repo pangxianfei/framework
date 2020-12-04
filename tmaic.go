@@ -30,9 +30,8 @@ import (
 	"time"
 	"unicode"
 	"unicode/utf8"
-)
 
-//////////// Date/Time Functions ////////////
+)
 
 // Time time()
 func Time() int64 {
