@@ -25,8 +25,8 @@ type HttpContextor interface {
 	ResponseContextor
 	ResponseFileContextor
 	ResponseStreamContextor
-
 	Request() *http.Request
+
 	SetRequest(r *http.Request)
 	Writer() gin.ResponseWriter
 	SetWriter(w gin.ResponseWriter)

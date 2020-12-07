@@ -13,9 +13,7 @@ type Engine struct {
 }
 
 func New() *Engine {
-	gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
-
-	}
+	gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {}
 	return &Engine{Engine: gin.New()}
 }
 

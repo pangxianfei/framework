@@ -16,12 +16,25 @@ import (
 	"github.com/pangxianfei/framework/request"
 	"github.com/pangxianfei/framework/request/websocket"
 )
-
+const maxRouteMapLength = 1000
 var RouteNameMap *routeNameMap
+type route struct {
+	name              string
+	bindFunc          func(handlers ...request.HandlerFunc)
+	handlers          []request.HandlerFunc
+	relativePath      string
+	httpMethod        string
+	basicPath         string
+	prefixHandlersNum int
+	wsHandler         websocket.Handler
+
+}
+
 
 type routeNameMap struct {
 	lock sync.RWMutex
 	data map[string]string
+	controller string
 }
 
 func newRouteNameMap() *routeNameMap {
@@ -54,22 +67,12 @@ func (rnm *routeNameMap) Get(routeName string, param tmaic.S) (url string, err e
 	return routeUrl, nil
 }
 
-type route struct {
-	name              string
-	bindFunc          func(handlers ...request.HandlerFunc)
-	handlers          []request.HandlerFunc
-	relativePath      string
-	httpMethod        string
-	basicPath         string
-	prefixHandlersNum int
-	wsHandler         websocket.Handler
-}
-
-const maxRouteMapLength = 1000
 
 type engineRoute struct {
 	lock sync.RWMutex
 	data map[request.EngineHash]chan *route
+	name string
+	controller string
 }
 
 func newEngineRoute() *engineRoute {
