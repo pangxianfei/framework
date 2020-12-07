@@ -12,6 +12,6 @@ type DashboardGroup struct {
 }
 
 func (dg *DashboardGroup) Group(group route.Grouper) {
-	group.GET("/", dg.DashboardController.Index)
-	group.Websocket("/ws", &dg.DashboardWebsocketController)
+	///group.GET("/", dg.DashboardController.Index)
+	//group.Websocket("/ws", &dg.DashboardWebsocketController)
 }

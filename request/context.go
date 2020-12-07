@@ -20,5 +20,6 @@ type Context interface {
 
 	auth.Context
 	auth.RequestIUser
-	View(name string, obj interface{})
+
+	//View(name string, obj interface{})
 }

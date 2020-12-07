@@ -14,7 +14,7 @@ type Engine struct {
 
 func New() *Engine {
 	gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
-		// log.Info(fmt.Sprintf("%-6s %-25s --> %s (%d handlers)\n", httpMethod, absolutePath, handlerName, nuHandlers))
+
 	}
 	return &Engine{Engine: gin.New()}
 }
