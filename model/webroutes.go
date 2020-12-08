@@ -7,7 +7,7 @@ import (
 type Webroutes struct {
 	BaseModel
 	ID         uint       `gorm:"column:id;primary_key;auto_increment"`
-	Routename  string     `gorm:"column:routename;type:varchar(255)"`
+	RouteName  string     `gorm:"column:routename;type:varchar(255)"`
 	Controller string     `gorm:"column:controller;type:varchar(255);unique_index;not null"`
 	Function   string     `gorm:"column:Function;type:varchar(255);not null"`
 	Path       string     `gorm:"column:path;type:varchar(255);not null"`
@@ -21,10 +21,10 @@ func (Webroutes *Webroutes) TableName() string {
 }
 
 /*
-func (user *User) SetNameAttribute(value interface{}) {
-	user.Name = user.Email
+func (webroutes *Webroutes) SetRouteNameAttribute(value interface{}) {
+	webroutes.RouteName = webroutes.RouteName
 }
 
-func (user *User) GetPasswordAttribute(value interface{}) interface{} {
+func (webroutes *Webroutes) GetRouteNameAttribute(value interface{}) interface{} {
 	return value
 }*/

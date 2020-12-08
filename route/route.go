@@ -190,7 +190,7 @@ func Bind(engine *request.Engine) {
 		/*************************保存路由 start *********************************/
 		r.lastHandlerName()
 		webroute := model.Webroutes{
-			Routename:  r.name,
+			RouteName:  r.name,
 			Controller: r.controller,
 			Function:   r.function,
 			Path:       r.absolutePath(),
