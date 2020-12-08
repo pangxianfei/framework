@@ -24,7 +24,7 @@ type BaseController struct {
 	auth.RequestUser
 	validator.Validation
 	model.BaseModel
-	Data       map[string]interface{}
+	ShowData       map[string]interface{}
 	Output     map[string]string
 	TplName    string
 	controller string
@@ -64,7 +64,7 @@ func (c *BaseController) View(request request.Context) {
 	log.Debug("TplName = " + c.TplName)
 	log.Debug("runFuncName = " + runFuncName())
 
-	request.HTML(http.StatusOK, c.TplName, c.Data)
+	request.HTML(http.StatusOK, c.TplName, c.ShowData)
 
 }
 
