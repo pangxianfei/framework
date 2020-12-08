@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"strings"
 	"sync"
-
+	"regexp"
 	"github.com/pangxianfei/framework/app"
 	"github.com/pangxianfei/framework/helpers/log"
 	"github.com/pangxianfei/framework"
@@ -15,6 +15,8 @@ import (
 	"github.com/pangxianfei/framework/policy"
 	"github.com/pangxianfei/framework/request"
 	"github.com/pangxianfei/framework/request/websocket"
+	"github.com/pangxianfei/framework/model"
+
 )
 const maxRouteMapLength = 1000
 var RouteNameMap *routeNameMap
@@ -27,14 +29,15 @@ type route struct {
 	basicPath         string
 	prefixHandlersNum int
 	wsHandler         websocket.Handler
-
+	controller        string
+	function          string
 }
-
 
 type routeNameMap struct {
 	lock sync.RWMutex
 	data map[string]string
 	controller string
+	function   string
 }
 
 func newRouteNameMap() *routeNameMap {
@@ -73,6 +76,7 @@ type engineRoute struct {
 	data map[request.EngineHash]chan *route
 	name string
 	controller string
+	Function string
 }
 
 func newEngineRoute() *engineRoute {
@@ -142,11 +146,29 @@ func (r *route) absolutePath() string {
 	return fmt.Sprintf("%s%s", r.basicPath, r.relativePath)
 }
 func (r *route) lastHandlerName() string {
+
+
 	if r.httpMethod == httpMethodWebsocket {
 		h := reflect.ValueOf(r.wsHandler).Elem().Type()
 		return h.PkgPath() + "." + h.Name()
 	}
+
+
 	if len(r.handlers) > 0 {
+		str := runtime.FuncForPC(reflect.ValueOf(r.handlers[len(r.handlers)-1]).Pointer()).Name()
+		str = strings.TrimSuffix(str, "-fm")
+		str = strings.TrimPrefix(str, "tmaic/app/http/controllers.")
+		reg := regexp.MustCompile(`([a-zA-Z0-9_]+)`)
+		array := reg.FindAllString(str, -1)
+		controllerNum := len(array)
+		for i := 0; i < controllerNum; i++ {
+			if i == 0 {
+				r.controller = array[i]
+			}
+			if i == 1 {
+				r.function = array[i]
+			}
+		}
 		return runtime.FuncForPC(reflect.ValueOf(r.handlers[len(r.handlers)-1]).Pointer()).Name()
 	}
 	return "nil"
@@ -156,18 +178,39 @@ func Bind(engine *request.Engine) {
 	hash := engine.Hash()
 	defer engineRouteMap.Close(hash)
 
+	var routeNum int
+	routeNum= 0
 	for r := range engineRouteMap.Get(hash) {
 		r.bindFunc(r.handlers...)
 
 		// for Route() function to easy retrieve url by name
 		RouteNameMap.set(r.name, r.absolutePath())
 
+
+		/*************************保存路由 start *********************************/
+		r.lastHandlerName()
+		webroute := model.Webroutes{
+			Routename:  r.name,
+			Controller: r.controller,
+			Function:   r.function,
+			Path:       r.absolutePath(),
+		}
+		db := webroute.DB()
+		if routeNum == 0{
+			//清空表记录  记录新的路由 pangxianfei by add
+			db.Exec("truncate table "+ webroute.TableName())
+		}
+		db.Create(&webroute);
+		/**************************保存路由 end **********************************/
+
+
 		if app.GetMode() != app.ModeProduction {
-			log.Info(fmt.Sprintf("%-6s %-30s --> %s (%d handlers)\n", r.httpMethod, r.absolutePath(), r.lastHandlerName(), r.handlerNum()))
+			 log.Info(fmt.Sprintf("%-6s %-30s --> controller:%s       -> function:%s", r.httpMethod, r.absolutePath(), r.controller,r.function))
 		}
 
 		if len(engineRouteMap.Get(hash)) <= 0 {
 			break
 		}
+		routeNum ++
 	}
 }
