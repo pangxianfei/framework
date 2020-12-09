@@ -3,23 +3,25 @@ package route
 import (
 	"errors"
 	"fmt"
-	"reflect"
-	"runtime"
-	"strings"
-	"sync"
-	"regexp"
+	"github.com/pangxianfei/framework"
 	"github.com/pangxianfei/framework/app"
 	"github.com/pangxianfei/framework/helpers/log"
-	"github.com/pangxianfei/framework"
 	"github.com/pangxianfei/framework/http/middleware"
+	"github.com/pangxianfei/framework/model"
 	"github.com/pangxianfei/framework/policy"
 	"github.com/pangxianfei/framework/request"
 	"github.com/pangxianfei/framework/request/websocket"
-	"github.com/pangxianfei/framework/model"
-
+	"reflect"
+	"regexp"
+	"runtime"
+	"strings"
+	"sync"
 )
+
 const maxRouteMapLength = 1000
+
 var RouteNameMap *routeNameMap
+
 type route struct {
 	name              string
 	bindFunc          func(handlers ...request.HandlerFunc)
@@ -34,8 +36,8 @@ type route struct {
 }
 
 type routeNameMap struct {
-	lock sync.RWMutex
-	data map[string]string
+	lock       sync.RWMutex
+	data       map[string]string
 	controller string
 	function   string
 }
@@ -70,13 +72,12 @@ func (rnm *routeNameMap) Get(routeName string, param tmaic.S) (url string, err e
 	return routeUrl, nil
 }
 
-
 type engineRoute struct {
-	lock sync.RWMutex
-	data map[request.EngineHash]chan *route
-	name string
+	lock       sync.RWMutex
+	data       map[request.EngineHash]chan *route
+	name       string
 	controller string
-	Function string
+	Function   string
 }
 
 func newEngineRoute() *engineRoute {
@@ -85,6 +86,9 @@ func newEngineRoute() *engineRoute {
 	}
 }
 func (erm *engineRoute) initEngine(eh request.EngineHash) {
+
+	//log.Info(fmt.Sprintf("%s","pangxianfei"))
+	//log.Info(fmt.Sprintf("%s",maxRouteMapLength))
 	if erm.data[eh] == nil {
 		erm.data[eh] = make(chan *route, maxRouteMapLength)
 	}
@@ -95,10 +99,13 @@ func (erm *engineRoute) Get(eh request.EngineHash) chan *route {
 	return erm.data[eh]
 }
 func (erm *engineRoute) Set(eh request.EngineHash, r *route) {
-	//@todo doesn't process the situation that for multi serve
+	//@todo 不处理多发的情况
 	erm.lock.Lock()
+
 	defer erm.lock.Unlock()
+	//log.Debug(r.function)
 	erm.initEngine(eh)
+
 	erm.data[eh] <- r
 }
 func (erm *engineRoute) Close(eh request.EngineHash) {
@@ -113,7 +120,14 @@ func init() {
 }
 
 func newRoute(httpMethod string, g *group, relativePath string, bindFunc func(ginHandlers ...request.HandlerFunc), handlers ...request.HandlerFunc) *route {
-	r := route{httpMethod: httpMethod, prefixHandlersNum: len(g.RouterGroup.Handlers), basicPath: g.RouterGroup.BasePath(), relativePath: relativePath, bindFunc: bindFunc, handlers: handlers}
+
+	r := route{
+		httpMethod:        httpMethod,
+		prefixHandlersNum: len(g.RouterGroup.Handlers),
+		basicPath:         g.RouterGroup.BasePath(),
+		relativePath:      relativePath, bindFunc: bindFunc, handlers: handlers,
+	}
+	r.controller = r.lastHandlerName()
 
 	engineRouteMap.Set(g.engineHash, &r)
 
@@ -147,12 +161,10 @@ func (r *route) absolutePath() string {
 }
 func (r *route) lastHandlerName() string {
 
-
 	if r.httpMethod == httpMethodWebsocket {
 		h := reflect.ValueOf(r.wsHandler).Elem().Type()
 		return h.PkgPath() + "." + h.Name()
 	}
-
 
 	if len(r.handlers) > 0 {
 		str := runtime.FuncForPC(reflect.ValueOf(r.handlers[len(r.handlers)-1]).Pointer()).Name()
@@ -179,13 +191,23 @@ func Bind(engine *request.Engine) {
 	defer engineRouteMap.Close(hash)
 
 	var routeNum int
-	routeNum= 0
+	routeNum = 0
+
+	if app.GetMode() != app.ModeProduction {
+		console := `
+////////////////////////////////////////////
+///////     Tmaic Api Web Framework     ////
+////  gitee.com/pangxianfei/tmaic v1.0.16///
+////////////////////////////////////////////
+`
+		fmt.Println(fmt.Sprintf("\033[0;33m %v \033[0m", console))
+	}
+
 	for r := range engineRouteMap.Get(hash) {
 		r.bindFunc(r.handlers...)
 
 		// for Route() function to easy retrieve url by name
 		RouteNameMap.set(r.name, r.absolutePath())
-
 
 		/*************************保存路由 start *********************************/
 		r.lastHandlerName()
@@ -196,21 +218,21 @@ func Bind(engine *request.Engine) {
 			Path:       r.absolutePath(),
 		}
 		db := webroute.DB()
-		if routeNum == 0{
+		if routeNum == 0 {
 			//清空表记录  记录新的路由 pangxianfei by add
-			db.Exec("truncate table "+ webroute.TableName())
+			db.Exec("truncate table " + webroute.TableName())
 		}
-		db.Create(&webroute);
+		db.Create(&webroute)
 		/**************************保存路由 end **********************************/
 
-
 		if app.GetMode() != app.ModeProduction {
-			 log.Info(fmt.Sprintf("%-6s %-30s --> controller:%s       -> function:%s", r.httpMethod, r.absolutePath(), r.controller,r.function))
+			//fmt.Println(fmt.Sprintf("[ORANGE] %-6s   %-30s   %-20s  %s", r.httpMethod,r.relativePath, r.controller, r.function))
+			log.Info(fmt.Sprintf("%-6s %-30s --> %s (%d handlers)\n", r.httpMethod, r.absolutePath(), r.lastHandlerName(), r.handlerNum()))
 		}
 
 		if len(engineRouteMap.Get(hash)) <= 0 {
 			break
 		}
-		routeNum ++
+		routeNum++
 	}
 }
