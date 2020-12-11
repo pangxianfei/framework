@@ -45,7 +45,6 @@ type LifeCycleContextor interface {
 	Copy() *gin.Context
 	HandlerName() string
 	HandlerNames() []string
-
 	Handler() gin.HandlerFunc
 	Next()
 	IsAborted() bool

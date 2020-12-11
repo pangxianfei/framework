@@ -86,9 +86,6 @@ func newEngineRoute() *engineRoute {
 	}
 }
 func (erm *engineRoute) initEngine(eh request.EngineHash) {
-
-	//log.Info(fmt.Sprintf("%s","pangxianfei"))
-	//log.Info(fmt.Sprintf("%s",maxRouteMapLength))
 	if erm.data[eh] == nil {
 		erm.data[eh] = make(chan *route, maxRouteMapLength)
 	}
@@ -99,13 +96,10 @@ func (erm *engineRoute) Get(eh request.EngineHash) chan *route {
 	return erm.data[eh]
 }
 func (erm *engineRoute) Set(eh request.EngineHash, r *route) {
-	//@todo 不处理多发的情况
+	//@todo doesn't process the situation that for multi serve
 	erm.lock.Lock()
-
 	defer erm.lock.Unlock()
-	//log.Debug(r.function)
 	erm.initEngine(eh)
-
 	erm.data[eh] <- r
 }
 func (erm *engineRoute) Close(eh request.EngineHash) {
@@ -120,14 +114,7 @@ func init() {
 }
 
 func newRoute(httpMethod string, g *group, relativePath string, bindFunc func(ginHandlers ...request.HandlerFunc), handlers ...request.HandlerFunc) *route {
-
-	r := route{
-		httpMethod:        httpMethod,
-		prefixHandlersNum: len(g.RouterGroup.Handlers),
-		basicPath:         g.RouterGroup.BasePath(),
-		relativePath:      relativePath, bindFunc: bindFunc, handlers: handlers,
-	}
-	r.controller = r.lastHandlerName()
+	r := route{httpMethod: httpMethod, prefixHandlersNum: len(g.RouterGroup.Handlers), basicPath: g.RouterGroup.BasePath(), relativePath: relativePath, bindFunc: bindFunc, handlers: handlers}
 
 	engineRouteMap.Set(g.engineHash, &r)
 
@@ -192,17 +179,6 @@ func Bind(engine *request.Engine) {
 
 	var routeNum int
 	routeNum = 0
-
-	if app.GetMode() != app.ModeProduction {
-		console := `
-////////////////////////////////////////////
-///////     Tmaic Api Web Framework     ////
-////  gitee.com/pangxianfei/tmaic v1.0.16///
-////////////////////////////////////////////
-`
-		fmt.Println(fmt.Sprintf("\033[0;33m %v \033[0m", console))
-	}
-
 	for r := range engineRouteMap.Get(hash) {
 		r.bindFunc(r.handlers...)
 
@@ -226,8 +202,7 @@ func Bind(engine *request.Engine) {
 		/**************************保存路由 end **********************************/
 
 		if app.GetMode() != app.ModeProduction {
-			//fmt.Println(fmt.Sprintf("[ORANGE] %-6s   %-30s   %-20s  %s", r.httpMethod,r.relativePath, r.controller, r.function))
-			log.Info(fmt.Sprintf("%-6s %-30s --> %s (%d handlers)\n", r.httpMethod, r.absolutePath(), r.lastHandlerName(), r.handlerNum()))
+			log.Info(fmt.Sprintf("%-6s %-30s --> controller:%s       -> function:%s", r.httpMethod, r.absolutePath(), r.controller, r.function))
 		}
 
 		if len(engineRouteMap.Get(hash)) <= 0 {

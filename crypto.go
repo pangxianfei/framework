@@ -1,7 +1,6 @@
 package tmaic
 
 import (
-	"fmt"
 	"github.com/farmerx/gorsa"
 	c "github.com/pangxianfei/framework/config"
 	"io/ioutil"
@@ -55,7 +54,6 @@ func Encryption(str string) (string, bool) {
 	//开始加密
 	puberty, err := gorsa.RSA.PubKeyENCTYPT([]byte(str))
 	if err == nil {
-		fmt.Println(string(puberty))
 		return string(puberty), true
 	}
 	return string(`Encryption failed`), false

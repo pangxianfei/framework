@@ -2,12 +2,14 @@ package helper
 
 import (
 	"errors"
-	"github.com/jinzhu/copier"
-	"github.com/pangxianfei/framework/model"
-	"gopkg.in/go-playground/validator.v9"
-	"gorm.io/gorm"
 	"reflect"
 	"strings"
+
+	"github.com/jinzhu/copier"
+	"gopkg.in/go-playground/validator.v9"
+	"gorm.io/gorm"
+
+	"github.com/pangxianfei/framework/model"
 )
 
 type Helper struct {
@@ -111,7 +113,30 @@ func (h *Helper) Create(outPtr interface{}) error {
 
 	// validate data
 	if err := validator.New().Struct(inData); err != nil {
-
+		//// this check is only needed when your code could produce
+		//// an invalid value for validation such as interface with nil
+		//// value most including myself do not usually have code like this.
+		//if _, ok := err.(*validator.InvalidValidationError); ok {
+		//	fmt.Println(err)
+		//	return
+		//}
+		//
+		//for _, err := range err.(validator.ValidationErrors) {
+		//
+		//	fmt.Println(err.Namespace())
+		//	fmt.Println(err.Field())
+		//	fmt.Println(err.StructNamespace()) // can differ when a custom TagNameFunc is registered or
+		//	fmt.Println(err.StructField())     // by passing alt name to ReportError like below
+		//	fmt.Println(err.Tag())
+		//	fmt.Println(err.ActualTag())
+		//	fmt.Println(err.Kind())
+		//	fmt.Println(err.Type())
+		//	fmt.Println(err.Value())
+		//	fmt.Println(err.Param())
+		//	fmt.Println()
+		//}
+		//
+		//// from here you can create your own error messages in whatever language you wish
 		return err
 	}
 
@@ -125,6 +150,66 @@ func (h *Helper) Create(outPtr interface{}) error {
 	}
 
 	return nil
+}
+
+// outPtr must be a struct pointer, modify and nullDataPtr must be a same type
+func (h *Helper) Save(outPtr interface{}, modify interface{}, nullDataPtr ...interface{}) error {
+	// handler null data
+	var nullPtr interface{}
+	if len(nullDataPtr) > 0 {
+		nullPtr = nullDataPtr[0]
+	}
+
+	// modify data
+	inData, err := fillStruct(outPtr, modify, nullPtr, true)
+	if err != nil {
+		return err
+	}
+
+	// validate data
+	if err := validator.New().Struct(inData); err != nil {
+		//// this check is only needed when your code could produce
+		//// an invalid value for validation such as interface with nil
+		//// value most including myself do not usually have code like this.
+		//if _, ok := err.(*validator.InvalidValidationError); ok {
+		//	fmt.Println(err)
+		//	return
+		//}
+		//
+		//for _, err := range err.(validator.ValidationErrors) {
+		//
+		//	fmt.Println(err.Namespace())
+		//	fmt.Println(err.Field())
+		//	fmt.Println(err.StructNamespace()) // can differ when a custom TagNameFunc is registered or
+		//	fmt.Println(err.StructField())     // by passing alt name to ReportError like below
+		//	fmt.Println(err.Tag())
+		//	fmt.Println(err.ActualTag())
+		//	fmt.Println(err.Kind())
+		//	fmt.Println(err.Type())
+		//	fmt.Println(err.Value())
+		//	fmt.Println(err.Param())
+		//	fmt.Println()
+		//}
+		//
+		//// from here you can create your own error messages in whatever language you wish
+		return err
+	}
+
+	// save record
+	if err := h.DB().Where(outPtr).Save(inData).Error; err != nil {
+		return err
+	}
+
+	if err := copier.Copy(outPtr, inData); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (h *Helper) SaveByID(id interface{}, outPtr interface{}, modify interface{}) error {
+	//@todo First(), get primarykey through tag, then save
+	return h.Save(outPtr, modify)
 }
 
 // outPtr must be a struct pointer

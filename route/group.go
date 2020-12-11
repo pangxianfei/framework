@@ -1,12 +1,14 @@
 package route
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
+
+	"github.com/pangxianfei/framework/request/websocket"
+
 	"github.com/pangxianfei/framework/policy"
 	"github.com/pangxianfei/framework/request"
-	"github.com/pangxianfei/framework/request/websocket"
-	"net/http"
-	//"github.com/pangxianfei/framework/helpers/log"
 )
 
 type RouteGrouper interface {
@@ -45,6 +47,7 @@ type group struct {
 
 type routeEnder interface {
 	policy.RoutePolicier
+
 	Name(routeName string) policy.RoutePolicier
 }
 
@@ -64,19 +67,9 @@ func (g *group) Any(relativePath string, handlers ...request.HandlerFunc) routeE
 
 func (g *group) GET(relativePath string, handlers ...request.HandlerFunc) routeEnder {
 	relativePath = g.clearPath(relativePath)
-
-	r := newRoute(
-		"GET", g,
-		relativePath,
-		func(innerHandlers ...request.HandlerFunc) {
-			g.RouterGroup.GET(relativePath, request.ConvertHandlers(innerHandlers)...)
-		},
-		handlers...)
-	_ = r.controller
-
-	//log.Debug(controller)
-
-	return r
+	return newRoute("GET", g, relativePath, func(innerHandlers ...request.HandlerFunc) {
+		g.RouterGroup.GET(relativePath, request.ConvertHandlers(innerHandlers)...)
+	}, handlers...)
 }
 
 func (g *group) POST(relativePath string, handlers ...request.HandlerFunc) routeEnder {

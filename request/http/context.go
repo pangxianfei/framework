@@ -37,7 +37,6 @@ func (c *Context) HTML(code int, name string, obj interface{}) {
 func (c *httpContext) GinContext() *gin.Context {
 	return c.Context
 }
-
 func (c *httpContext) Request() *http.Request {
 	return c.Context.Request
 }
