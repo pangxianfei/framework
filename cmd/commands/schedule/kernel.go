@@ -1,5 +1,0 @@
-package schedule
-
-func Initialize() {
-
-}

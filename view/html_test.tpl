@@ -1,1 +1,0 @@
-<html><head><title>Orange Framework {{.Title|urldecode}}</title></head><body>{{.Content}}{{.Content2|unescaped}}<body><html>
