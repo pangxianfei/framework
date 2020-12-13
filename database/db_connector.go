@@ -1,28 +1,29 @@
 package database
 
 import (
-	mysql "gorm.io/driver/mysql"
-	sqlserver "gorm.io/driver/sqlserver"
-	"gorm.io/gorm"
 	"database/sql"
 	"github.com/pangxianfei/framework/config"
 	"github.com/pangxianfei/framework/database/driver"
 	"github.com/pangxianfei/framework/helpers/zone"
+	mysql "gorm.io/driver/mysql"
+	sqlserver "gorm.io/driver/sqlserver"
+	"gorm.io/gorm"
 	"time"
 )
 
 var db *gorm.DB
 var dber databaser
-/***
- pangxianfeu by add
- ***/
+
+/****
+**** pangxianfeu by add
+****/
 func Initialize() {
 	dber, db = setv2Connection("default")
 }
 
 /**
   pangxianfei by add
- */
+*/
 func setv2Connection(conn string) (dber databaser, sqlDb *gorm.DB) {
 
 	if conn == "" {
@@ -30,8 +31,8 @@ func setv2Connection(conn string) (dber databaser, sqlDb *gorm.DB) {
 	}
 	conn = config.GetString("database." + conn)
 
-
 	switch conn {
+	//mysql 驱动
 	case "mysql":
 		dber = driver.NewMysql(conn)
 		Db, err := sql.Open("mysql", dber.ConnectionArgs())
@@ -54,6 +55,7 @@ func setv2Connection(conn string) (dber databaser, sqlDb *gorm.DB) {
 		Db.SetConnMaxLifetime(zone.Duration(config.GetInt("database.max_life_seconds")) * zone.Second)
 		return dber, sqlDb
 		break
+	//mssql 驱动
 	case "mssql":
 		dber = driver.NewMssql(conn)
 		sqlDb, err := gorm.Open(sqlserver.Open(dber.ConnectionArgs()), &gorm.Config{})

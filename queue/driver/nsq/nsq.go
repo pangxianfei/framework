@@ -9,6 +9,8 @@ import (
 	"github.com/pangxianfei/framework/helpers/hash"
 )
 
+type hashTopicChannel = string
+
 func NewNsq(connection string) *nsq {
 	n := new(nsq)
 	n.consumerList = make(map[hashTopicChannel]*consumer)
@@ -31,7 +33,7 @@ func NewNsq(connection string) *nsq {
 	return n
 }
 
-type hashTopicChannel = string
+
 
 func (n *nsq) addConnectedProducer(p *producer) {
 	n.connectedProducerList = append(n.connectedProducerList, p)
@@ -55,13 +57,14 @@ func (n *nsq) consumerConnect(topicName string, channelName string) (hashTopicCh
 	if err != nil {
 		return "", err
 	}
-
-	n.setConsumer(c.hashTopicChannel, c) // concurrent map writes
+	// concurrent map writes
+	n.setConsumer(c.hashTopicChannel, c)
 	// n.consumerList[c.hashTopicChannel] = c
 	return c.hashTopicChannel, nil
 }
 func (n *nsq) producerConnect() (err error) {
-	addr := n.nsqdTcpConnectionArgsList()[0] //@todo default producer to nsqd index 0
+	//@todo default producer to nsqd index 0
+	addr := n.nsqdTcpConnectionArgsList()[0]
 
 	p := new(producer)
 	p.cfg = _nsq.NewConfig()

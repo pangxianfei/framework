@@ -25,7 +25,7 @@ type queuer interface {
 	producerer
 	consumerer
 	registerer
-	SupportBroadCasting() bool // For listener which has not start before emit, it will not receive the event. in SupportBroadCasting mode
+	SupportBroadCasting() bool // 对于在发出之前尚未启动的侦听器，它将不会接收事件。支持广播模式
 	Close() (err error)
 }
 

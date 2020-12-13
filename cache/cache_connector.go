@@ -14,24 +14,26 @@ func Initialize() {
 }
 func setStore(store string) (cer cacher) {
 
-	_conn := store
+	conn := store
 	if store == "default" {
-		_conn = config.GetString("cache." + store)
-		if _conn == "" {
+		conn = config.GetString("cache." + store)
+		if conn == "" {
 			panic("cache connection parse error")
 		}
 	}
 
 	// get driver instance and connect cache store
-	switch _conn {
+	switch conn {
+	//memory 驱动
 	case "memory":
 		cer = memory.NewMemory(
 			config.GetString("cache.stores.memory.prefix"),
 			config.GetUint("cache.stores.memory.default_expiration_minute"),
 			config.GetUint("cache.stores.memory.cleanup_interval_minute"),
 		)
+	//redis 缓存驱动
 	case "redis":
-		connection := config.GetString("cache.stores.redis.connection") // cache
+		connection := config.GetString("cache.stores.redis.connection")
 		cer = redis.NewRedis(
 			config.GetString("database.redis."+connection+".host"),
 			config.GetString("database.redis."+connection+".port"),

@@ -2,16 +2,20 @@ package hub
 
 import "github.com/pangxianfei/framework/queue"
 
-// tmaic do the broadcast it self, for compatible with the queue driver which doesn't support topic broadcasting
+// 自己做广播，与不支持主题广播的队列驱动程序兼容
 func topicName(e Eventer, l Listener, supportBroadCasting func() bool) string {
 	if supportBroadCasting() {
-		return "EVENT-" + EventName(e)
+		return "event-" + EventName(e)
 	}
-	return "EVENT-" + EventName(e) + "-" + channelName(l)
+	return "event-" + EventName(e) + "-" + channelName(l)
 }
+
+
 func channelName(l Listener) string {
 	return l.Name()
 }
+
+
 func RegisterQueue() {
 	for e, llist := range hub {
 		for _, l := range llist {

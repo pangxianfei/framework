@@ -2,11 +2,9 @@ package sentry
 
 import (
 	"fmt"
-
 	"github.com/getsentry/raven-go"
 	"github.com/gin-contrib/sentry"
 	"github.com/gin-gonic/gin"
-
 	"github.com/pangxianfei/framework/config"
 )
 

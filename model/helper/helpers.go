@@ -2,14 +2,12 @@ package helper
 
 import (
 	"errors"
-	"reflect"
-	"strings"
-
 	"github.com/jinzhu/copier"
+	"github.com/pangxianfei/framework/model"
 	"gopkg.in/go-playground/validator.v9"
 	"gorm.io/gorm"
-
-	"github.com/pangxianfei/framework/model"
+	"reflect"
+	"strings"
 )
 
 type Helper struct {
@@ -40,9 +38,8 @@ func fillStruct(data interface{}, fill interface{}, nullData interface{}, mustFi
 	fillValue := reflect.ValueOf(fill)
 
 	var nullValue reflect.Value
-	//var nullType reflect.Type
+
 	if nullData != nil {
-		//nullType = reflect.TypeOf(nullData).Elem()
 		nullValue = reflect.ValueOf(nullData).Elem()
 	}
 
@@ -55,7 +52,6 @@ func fillStruct(data interface{}, fill interface{}, nullData interface{}, mustFi
 		}
 
 		if nullData != nil {
-			// nullData if null not fill
 			if isNull(fillValue.Field(i), nullValue.Field(i)) {
 				continue
 			}
@@ -64,7 +60,6 @@ func fillStruct(data interface{}, fill interface{}, nullData interface{}, mustFi
 		// fill original data
 		isFilled := false
 		for j := 0; j < dataType.NumField(); j++ {
-			//if newDataType.Field(i).Type == dataType.Field(j).Type && newDataType.Field(i).Name == dataType.Field(j).Name {
 			if isSameField(newDataType.Field(i), dataType.Field(j)) {
 				newDataValue.Field(i).Set(dataValue.Field(j))
 				isFilled = true
@@ -77,8 +72,6 @@ func fillStruct(data interface{}, fill interface{}, nullData interface{}, mustFi
 
 		// fill input data
 		for j := 0; j < fillType.NumField(); j++ {
-
-			// if kind is ptr
 			if fillValue.Field(j).Kind() == reflect.Ptr {
 				// if not set, then do not fill
 				if fillValue.Field(j).IsNil() {
@@ -87,10 +80,6 @@ func fillStruct(data interface{}, fill interface{}, nullData interface{}, mustFi
 
 			}
 
-			// if kind is value fill
-			//@todo WARN we have not check zero value for update, so if the type is `string`, and its' value is `""`(not set @fill), we'll override the correct value!!!!
-			// fill data
-			//if newDataType.Field(i).Type == fillType.Field(j).Type && newDataType.Field(i).Name == fillType.Field(j).Name {
 			if isSameField(newDataType.Field(i), fillType.Field(j)) {
 				newDataValue.Field(i).Set(fillValue.Field(j))
 				break
@@ -154,61 +143,67 @@ func (h *Helper) Create(outPtr interface{}) error {
 
 // outPtr must be a struct pointer, modify and nullDataPtr must be a same type
 func (h *Helper) Save(outPtr interface{}, modify interface{}, nullDataPtr ...interface{}) error {
-	// handler null data
-	var nullPtr interface{}
-	if len(nullDataPtr) > 0 {
-		nullPtr = nullDataPtr[0]
-	}
 
-	// modify data
-	inData, err := fillStruct(outPtr, modify, nullPtr, true)
-	if err != nil {
+	if err := h.DB().Debug().Model(outPtr).UpdateColumns(modify).Error; err != nil {
 		return err
 	}
 
-	// validate data
-	if err := validator.New().Struct(inData); err != nil {
-		//// this check is only needed when your code could produce
-		//// an invalid value for validation such as interface with nil
-		//// value most including myself do not usually have code like this.
-		//if _, ok := err.(*validator.InvalidValidationError); ok {
-		//	fmt.Println(err)
-		//	return
-		//}
-		//
-		//for _, err := range err.(validator.ValidationErrors) {
-		//
-		//	fmt.Println(err.Namespace())
-		//	fmt.Println(err.Field())
-		//	fmt.Println(err.StructNamespace()) // can differ when a custom TagNameFunc is registered or
-		//	fmt.Println(err.StructField())     // by passing alt name to ReportError like below
-		//	fmt.Println(err.Tag())
-		//	fmt.Println(err.ActualTag())
-		//	fmt.Println(err.Kind())
-		//	fmt.Println(err.Type())
-		//	fmt.Println(err.Value())
-		//	fmt.Println(err.Param())
-		//	fmt.Println()
-		//}
-		//
-		//// from here you can create your own error messages in whatever language you wish
-		return err
-	}
+	/*
+		var nullPtr interface{}
+		if len(nullDataPtr) > 0 {
+			nullPtr = nullDataPtr[0]
+		}
 
-	// save record
-	if err := h.DB().Where(outPtr).Save(inData).Error; err != nil {
-		return err
-	}
 
-	if err := copier.Copy(outPtr, inData); err != nil {
-		return err
-	}
+		inData, err := fillStruct(outPtr, modify, nullPtr, true)
+		if err != nil {
+			return err
+		}
+
+
+		if err := validator.New().Struct(inData); err != nil {
+			//// this check is only needed when your code could produce
+			//// an invalid value for validation such as interface with nil
+			//// value most including myself do not usually have code like this.
+			//if _, ok := err.(*validator.InvalidValidationError); ok {
+			//	fmt.Println(err)
+			//	return
+			//}
+			//
+			//for _, err := range err.(validator.ValidationErrors) {
+			//
+			//	fmt.Println(err.Namespace())
+			//	fmt.Println(err.Field())
+			//	fmt.Println(err.StructNamespace()) // can differ when a custom TagNameFunc is registered or
+			//	fmt.Println(err.StructField())     // by passing alt name to ReportError like below
+			//	fmt.Println(err.Tag())
+			//	fmt.Println(err.ActualTag())
+			//	fmt.Println(err.Kind())
+			//	fmt.Println(err.Type())
+			//	fmt.Println(err.Value())
+			//	fmt.Println(err.Param())
+			//	fmt.Println()
+			//}
+			//
+			//// from here you can create your own error messages in whatever language you wish
+			return err
+		}
+
+		if err := h.DB().Where(outPtr).Save(inData).Error; err != nil {
+			return err
+		}
+
+		if err := copier.Copy(outPtr, inData); err != nil {
+			return err
+		}
+	*/
 
 	return nil
+
 }
 
 func (h *Helper) SaveByID(id interface{}, outPtr interface{}, modify interface{}) error {
-	//@todo First(), get primarykey through tag, then save
+
 	return h.Save(outPtr, modify)
 }
 
