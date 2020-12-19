@@ -11,7 +11,6 @@ var v *viper.Viper
 func init() {
 	v = viper.New()
 	v.SetConfigName(".env")
-	v.SetConfigType("json")
 	v.AddConfigPath(".")
 	err := v.ReadInConfig() // Find and read the config file
 	if err != nil {         // Handle errors reading the config file
